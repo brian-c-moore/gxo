@@ -116,20 +116,20 @@ The execution process within the `gxo` process can be broken down as follows:
 
 ```mermaid
 graph TD
-    A[Start: gxo command] --> B(1 Parse CLI Flags);
-    B --> C(2 Initialize Services: Logger, EventBus, StateMgr, ModuleRegistry, etc.);
-    C --> D(3 Load Playbook YAML);
-    D --> E(4 Validate Playbook Schema);
-    E --> F(5 Build Execution Plan: DAG Construction);
-    F -- Based on State & Stream Dependencies --> G{6 Execute Tasks within Engine};
+    A[Start: gxo command] --> B(1: Parse CLI Flags);
+    B --> C(2: Initialize Services: Logger, EventBus, StateMgr, ModuleRegistry, etc.);
+    C --> D(3: Load Playbook YAML);
+    D --> E(4: Validate Playbook Schema);
+    E --> F(5: Build Execution Plan: DAG Construction);
+    F -- Based on State & Stream Dependencies --> G{6: Execute Tasks within Engine};
     G -- Loop Until Done --> H(Find Ready Tasks);
     H --> I(Invoke Pre-Execution Hooks);
     I --> J(Execute Task via TaskRunner: when/loop/retry/template/module...);
     J --> K(Invoke Post-Execution Hooks);
     K --> L(Update Task Status);
     L -- More Tasks? --> H;
-    L -- All Done? --> M(7 Emit PlaybookEnd Event);
-    M --> N(8 Report Final Status & Exit);
+    L -- All Done? --> M(7: Emit PlaybookEnd Event);
+    M --> N(8: Report Final Status & Exit);
 
     subgraph gxo Task Execution Loop
         H; I; J; K; L;
