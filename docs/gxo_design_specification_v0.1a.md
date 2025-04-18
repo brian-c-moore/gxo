@@ -5,61 +5,61 @@
 
 **Table of Contents:**
 
-1.  Introduction: The Automation Kernel Vision
-2.  Goals & Scope (V0.1 Alpha)
-3.  High-Level Architecture (Full Kernel)
-4.  Core Concepts & Design Decisions (Full Engine Specification)
-    4.1.  Playbook Structure (Full, incl. Templating Engine Choice - Go Default)
-    4.2.  Task Definition (Full Specification)
-    4.3.  Modularity (Compile-Time Registration)
-    4.4.  Concurrency Model (Full DAG - Streaming, State, Failed Dep Handling, Cycle Detection, Status Access)
-    4.5.  Data Flow Model (Channels `chan map[string]interface{}`, Native State, Fan-Out)
-    4.6.  State Management (Centralized, Native `interface{}` Storage, Mutability Considerations, Engine Metadata)
-    4.7.  Parameter Handling & Templating (Native State Access, Go `text/template` Only for V0.1, Status Access)
-    4.8.  Error Handling & Reporting (Full: `RecordProcessingError`, Context, Buffering & Logging, `ignore_errors`)
-    4.9.  Retry Mechanism (Full Task-Level Implementation)
-    4.10. Security Principles (Core Engine Context, Input Validation)
-    4.11. Dry Run Mode (Core Engine Context Flag)
-    4.12. Design Constraints & Trade-offs (V0.1 Alpha - Modules Limited)
-5.  Detailed Component Specifications (Full Engine Implementation)
-    5.1.  `cmd/gxo/main.go` (Revised Flags)
-        5.1.1. CLI Usage (`gxo` Flags)
-    5.2.  `internal/config/` (Full Playbook Structure)
-        5.2.1. `config.go`
-        5.2.2. `load.go` (No Includes Yet)
-        5.2.3. `validation.go`
-    5.3.  `internal/engine/` (Full Implementation)
-        5.3.1. `engine.go` (Full Orchestration, Error Aggregation, Status Writing)
-        5.3.2. `dag.go` (Full Dependency Analysis - Stream/State, Cycle Detection)
-        5.3.3. `channel_manager.go` (Channel Creation/Management, Configurable Buffer)
-        5.3.4. `task_runner.go` (Full Logic: `when`, `loop`, `retry`, Channel Handling, `RecordProcessingError` Handling, Dry Run Check)
-    5.4.  `internal/logger/`
-        5.4.1. `logger.go` (`RecordProcessingError` Handling)
-    5.5.  `internal/module/`
-        5.5.1. `module.go` (Full Interface including Channels, Context Keys)
-        5.5.2. `registry.go`
-    5.6.  `internal/state/`
-        5.6.1. `store.go` (Interfaces - Native Types)
-        5.6.2. `manager.go` (Methods for Native Types)
-        5.6.3. `memory_store.go` (Implementation for Native Types, Mutability Notes)
-    5.7.  `internal/template/` (Go `text/template` Only for V0.1)
-        5.7.1. `template.go` (Rendering Logic, State/Status Access, Variable Extraction)
-        5.7.2. `funcs.go` (Go funcs Implementation - `env`)
-    5.8.  `internal/errors/`
-        5.8.1. `errors.go` (Includes `RecordProcessingError`)
-    5.9.  `internal/retry/`
-        5.9.1. `retry.go` (Generic Retry Logic)
-    5.10. `internal/command/` (Runner)
-        5.10.1. `command.go`
-    5.11. `internal/paramutil/` (Parameter Validation Helpers)
-        5.11.1. `paramutil.go`
-    5.12. `modules/exec/` (The First Primitive Module)
-        5.12.1. `exec.go` (Implementing Full Module Interface)
-        5.12.2. `module_test.go` (Illustrative Testing Requirements)
-6.  Testing Strategy (V0.1 Alpha - Rigorous Unit Testing of Core Engine)
-    6.1.  Unit Testing (Rigorous Core Engine Coverage)
-    6.2.  Integration Testing (Engine + Mock Modules, Engine + `exec`)
-    6.3.  End-to-End Testing (Basic `exec` Playbooks testing state, params, register)
+1.  **Introduction: The Automation Kernel Vision**
+2.  **Goals & Scope (V0.1 Alpha)**
+3.  **High‑Level Architecture (Full Kernel)**
+4.  **Core Concepts & Design Decisions (Full Engine Specification)**
+    *   4.1. Playbook Structure (Full, incl. Templating Engine Choice – Go Default)
+    *   4.2. Task Definition (Full Specification)
+    *   4.3. Modularity (Compile‑Time Registration)
+    *   4.4. Concurrency Model (Full DAG – Streaming, State, Failed Dep Handling, Cycle Detection, Status Access)
+    *   4.5. Data Flow Model (Channels `chan map[string]interface{}`, Native State, Fan‑Out)
+    *   4.6. State Management (Centralized, Native `interface{}` Storage, Mutability Considerations, Engine Metadata)
+    *   4.7. Parameter Handling & Templating (Native State Access, Go `text/template` Only for V0.1, Status Access)
+    *   4.8. Error Handling & Reporting (Full: `RecordProcessingError`, Context, Buffering & Logging, `ignore_errors`)
+    *   4.9. Retry Mechanism (Full Task‑Level Implementation)
+    *   4.10. Security Principles (Core Engine Context, Input Validation)
+    *   4.11. Dry Run Mode (Core Engine Context Flag)
+    *   4.12. Design Constraints & Trade‑offs (V0.1 Alpha – Modules Limited)
+5.  **Detailed Component Specifications (Full Engine Implementation)**
+    *   5.1. `cmd/gxo/main.go`
+        *   5.1.1. CLI Usage (`gxo` Flags)
+    *   5.2. `internal/config/` (Full Playbook Structure)
+        *   5.2.1. `config.go`
+        *   5.2.2. `load.go` (No Includes Yet)
+        *   5.2.3. `validation.go`
+    *   5.3. `internal/engine/` (Full Implementation)
+        *   5.3.1. `engine.go` (Full Orchestration, Error Aggregation, Status Writing)
+        *   5.3.2. `dag.go` (Full Dependency Analysis – Stream/State, Cycle Detection)
+        *   5.3.3. `channel_manager.go` (Channel Creation/Management, Configurable Buffer)
+        *   5.3.4. `task_runner.go` (Full Logic: `when`, `loop`, `retry`, Channel Handling, `RecordProcessingError` Handling, Dry Run Check)
+    *   5.4. `internal/logger/`
+        *   5.4.1. `logger.go` (`RecordProcessingError` Handling)
+    *   5.5. `internal/module/`
+        *   5.5.1. `module.go` (Full Interface including Channels, Context Keys)
+        *   5.5.2. `registry.go`
+    *   5.6. `internal/state/`
+        *   5.6.1. `store.go` (Interfaces – Native Types)
+        *   5.6.2. `manager.go` (Methods for Native Types)
+        *   5.6.3. `memory_store.go` (Implementation for Native Types, Mutability Notes)
+    *   5.7. `internal/template/` (Go `text/template` Only for V0.1)
+        *   5.7.1. `template.go` (Rendering Logic, State/Status Access, Variable Extraction)
+        *   5.7.2. `funcs.go` (Go funcs Implementation – `env`)
+    *   5.8. `internal/errors/`
+        *   5.8.1. `errors.go` (Includes `RecordProcessingError`)
+    *   5.9. `internal/retry/`
+        *   5.9.1. `retry.go` (Generic Retry Logic)
+    *   5.10. `internal/command/` (Runner)
+        *   5.10.1. `command.go`
+    *   5.11. `internal/paramutil/` (Parameter Validation Helpers)
+        *   5.11.1. `paramutil.go`
+    *   5.12. `modules/exec/` (The First Primitive Module)
+        *   5.12.1. `exec.go` (Implementing Full Module Interface)
+        *   5.12.2. `module_test.go` (Illustrative Testing Requirements)
+6.  **Testing Strategy (V0.1 Alpha – Rigorous Unit Testing of Core Engine)**
+    *   6.1. Unit Testing (Rigorous Core Engine Coverage)
+    *   6.2. Integration Testing (Engine + Mock Modules, Engine + `exec`)
+    *   6.3. End‑to‑End Testing (Basic `exec` Playbooks testing state, params, register)
 
 ---
 
@@ -160,11 +160,9 @@ graph TD
 
 
 ```
-*The architecture diagram reflects the full V1.0 Beta engine logic being implemented in V0.1 Alpha. Data channels, full DAG dependencies, and complete TaskRunner logic are present, even though the initial `exec` module primarily interacts via State.*
+*The architecture diagram reflects the full engine logic being implemented in V0.1 Alpha. Data channels, full DAG dependencies, and complete TaskRunner logic are present, even though the initial `exec` module primarily interacts via State.*
 
 **4. Core Concepts & Design Decisions (Full Engine Specification)**
-
-*(These sections now mirror the V1.0 Beta specification for the Core Engine logic, with V0.1 Alpha constraints noted where applicable)*
 
 **4.1. Playbook Structure (Full, incl. Templating Engine Choice - Go Default)**
 
@@ -261,11 +259,9 @@ graph TD
 *   **No Includes/Advanced Secrets/Connections:** Focuses effort on core execution logic.
 *   **In-Memory State Only:** Sufficient for initial validation; persistence deferred.
 
-**5. Detailed Component Specifications (Full Engine Implementation)**
+**5. Detailed Component Specifications**
 
-*(Components now reflect the full V1.0 Beta engine logic, except where noted V0.1 limitations like Go template only)*
-
-**5.1. `cmd/gxo/main.go` (Revised Flags)**
+**5.1. `cmd/gxo/main.go` **
 
 *   **Purpose:** Entry point, parses flags, initializes services, runs engine.
 *   **Functions:**
